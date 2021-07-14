@@ -97,5 +97,9 @@ func removeIrrelevantField(workload *unstructured.Unstructured) {
 
 	unstructured.RemoveNestedField(workload.Object, "status")
 
-	unstructured.RemoveNestedField(workload.Object, "spec", "clusterIP")
+	// keep clusterIP filed when clusterIP = None
+	clusterIP, exist, _ := unstructured.NestedString(workload.Object, "spec", "clusterIP")
+	if clusterIP != "None" && exist {
+		unstructured.RemoveNestedField(workload.Object, "spec", "clusterIP")
+	}
 }
